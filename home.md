@@ -1,9 +1,19 @@
-## Welcome to GitHub Pages
+# Bem vindo a esta Homepage do GitHub
 
-You can use the [editor on GitHub](https://github.com/wizardigor/igorgomesads.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Trago a você exercicios e exemplos com qual eu tive contato no meio academico, mostrarei tambem alguns exemplos de codigos eleborados por mim sobre algum assunto.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Espero que lhe agrade e possa solucionar algum problema que precise resolver.
 
+_Se você tem alguma ideia, duvida ou queira contribuir com codigos, entre em contato._
+
+AULAS|CODIGOS
+-----|-------
+Dispositivos Moveis|
+Programação Visual|
+Modelagem De Dados UML|
+Algoritmos e Logica de Programação|
+
+##  Veja tambem alguns videos no [YouTube](YouTube).
 ### Markdown
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
