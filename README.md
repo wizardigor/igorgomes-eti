@@ -11,6 +11,6 @@ DISCIPLINAS                        | CODIGOS
 Dispositivos Moveis                | [Exercicios em Dart](https://github.com/wizardigor/DispositivosMoveis-Exercicios-Dart)
 Programação Visual                 | [Calculadora](https://github.com/wizardigor/Calculadora2), [Reajuste Salarial](https://github.com/wizardigor/Reajustesalarial), [Consumo de Tinta](https://github.com/wizardigor/ConsumoDeTinta)
 Modelagem De Dados UML             | [Carro](https://github.com/wizardigor/CodigosCpp/blob/master/Carro.cpp), [Editora](https://github.com/wizardigor/CodigosCpp/blob/master/Editora.cpp), [UsarServiço](https://github.com/wizardigor/CodigosCpp/blob/master/UsarServico.cpp)
-Algoritmos e Logica de Programação | [EMBREVE](#)
+Algoritmos e Logica de Programação | [EMBREVE](#) [Novos links](https://github.com/wizardigor/igorgomesads/blob/master/Pagina2.md)
 
 ##  Veja tambem alguns videos no [YouTube](YouTube).
