@@ -15,3 +15,4 @@ Programação Orientada a Objetos POO | [EMBREVE](https://github.com/wizardigor/
 Algoritmos e Logica de Programação | [EMBREVE](Pagina2.md)
 
 ##  Veja tambem alguns videos no [YouTube](https://www.youtube.com/channel/UCDfKJZnzItY6AyUzDCv9rtw).
+[![](https://stc.pagseguro.uol.com.br/public/img/botoes/doacoes/120x53-doar.gif)](https://pag.ae/7UfMnHYVv)
