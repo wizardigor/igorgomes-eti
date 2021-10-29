@@ -12,6 +12,8 @@ _Se você tem alguma ideia, duvida ou queira contribuir com codigos, entre em co
     <a href="https://www.linkedin.com/in/igorgomesads" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"></a> 
 </div>
 
+👉 **[Area para Discursões](https://github.com/wizardigor/igorgomes-eti/discussions)** 💬
+
 |DISCIPLINAS                        | CODIGOS
 |-----------------------------------|-----------------------------------------------
 |Dispositivos Moveis - **Dart Flutter**  | [Preço do Bitcoin](https://github.com/wizardigor/preco_bitcoin), [ATM Consultoria](https://github.com/wizardigor/ATMConsultoria), [Frases do Dia](https://github.com/wizardigor/FrasesDoDia), [Jokenpo](https://github.com/wizardigor/Jokenpo), [Alcool x Gasolina](https://github.com/wizardigor/Alcool_x_Gasolina), [Exemplos de Funcionalidades Flutter](https://github.com/wizardigor/ExemplosFuncionalidadesFlutter),[Coleção de apps](https://github.com/wizardigor/ColecaoDeApps)
