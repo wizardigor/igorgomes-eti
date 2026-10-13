@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assistente de Editais | Igor Gomes ETI</title>
+  <meta name="description" content="Busque editais e oportunidades de tecnologia com prazos e requisitos conferidos em documentos oficiais.">
+  <meta name="robots" content="noindex,follow">
+  <meta name="theme-color" content="#102d50">
+  <style>
+    :root{--navy:#102d50;--blue:#1e4d7b;--ink:#14212d;--muted:#586a79;--line:#d9e2e9;--paper:#f4f7f9;--green:#176b49;--green-bg:#eaf6ef;--amber:#875607;--amber-bg:#fff4dc}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff}
+    a{color:var(--blue)}button,input,select{font:inherit}.wrap{width:min(1080px,92%);margin:auto}
+    header{background:var(--navy);color:#fff;padding:18px 0}.brand{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand a{color:#fff;text-decoration:none;font-weight:700}.back{font-size:14px}
+    .hero{padding:48px 0 32px}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:#47749c;font-weight:750}
+    h1{font-size:clamp(34px,6vw,54px);line-height:1.1;letter-spacing:-.04em;margin:10px 0 14px;color:var(--navy)}
+    h2{font-size:24px;line-height:1.25;margin:0 0 14px;color:var(--navy)}p{color:var(--muted);margin:8px 0}
+    .profile{display:flex;align-items:flex-start;gap:16px;padding:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin:18px 0 26px}
+    .avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#dce8f2;color:var(--navy);font-weight:800;flex:none}
+    .profile strong{display:block;color:var(--ink)}.demo{display:inline-block;margin-top:4px;font-size:12px;background:#e8eef4;color:#344f67;padding:3px 8px;border-radius:99px;font-weight:650}
+    .searchbox{padding:22px;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 34px #102d500c}
+    .filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;align-items:end}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+    .field input,.field select{width:100%;min-height:46px;border:1px solid #b9c7d2;border-radius:7px;padding:10px 12px;background:white;color:var(--ink)}
+    .checkrow{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-top:16px}
+    .check{display:flex;align-items:center;gap:8px;font-size:14px;color:#354859}.check input{width:18px;height:18px;accent-color:var(--navy)}
+    .action{border:0;border-radius:7px;background:var(--navy);color:#fff;min-height:44px;padding:10px 16px;font-weight:700;cursor:pointer}
+    .results-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:32px 0 14px}.count{font-size:14px;color:var(--muted)}
+    .cards{display:grid;gap:16px}.card{border:1px solid var(--line);border-radius:11px;padding:22px;background:#fff}
+    .cardtop{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.agency{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+    .card h3{font-size:21px;line-height:1.3;margin:7px 0;color:var(--navy)}.badge{white-space:nowrap;border-radius:99px;padding:5px 10px;background:var(--green-bg);color:var(--green);font-size:12px;font-weight:750}
+    .badge.soon{background:var(--amber-bg);color:var(--amber)}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+    .chip{font-size:12px;padding:4px 9px;border-radius:99px;background:#edf2f6;color:#394f60}
+    .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;padding:14px 0;border-block:1px solid var(--line)}
+    .fact small{display:block;color:var(--muted);font-size:12px}.fact strong{font-size:14px}
+    .fit{border-left:3px solid #5a86aa;padding:10px 13px;background:#f2f6fa;border-radius:0 6px 6px 0;font-size:14px;margin:14px 0}.fit.low{border-color:#ad7a25;background:#fff9ed}
+    .links{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.linkbtn{display:inline-block;padding:9px 13px;border:1px solid var(--navy);border-radius:6px;text-decoration:none;font-weight:700;font-size:13px}.linkbtn.primary{background:var(--navy);color:#fff}
+    .empty{padding:28px;text-align:center;border:1px dashed #aebdca;border-radius:10px;color:var(--muted)}
+    .method{margin:30px 0 44px;padding:18px;background:var(--paper);border-radius:8px;font-size:13px}
+    footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:13px}
+    @media(max-width:700px){.filters{grid-template-columns:1fr}.hero{padding-top:34px}.cardtop{display:block}.badge{display:inline-block;margin-top:5px}.facts{grid-template-columns:1fr 1fr}.results-head{align-items:start;flex-direction:column}}
+    @media(max-width:400px){.facts{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><div class="wrap brand"><a href="https://wizardigor.github.io/igorgomes-eti/">Igor Gomes ETI</a><a class="back" href="https://wizardigor.github.io/igorgomes-eti/">← Voltar ao site</a></div></header>
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Assistente de editais · tecnologia</div>
+    <h1>Encontre oportunidades que combinam com seu perfil.</h1>
+    <p>Consulte chamadas com prazo vigente, confira os requisitos e abra o documento oficial antes de decidir participar.</p>
+  </section>
+
+  <section class="profile" aria-label="Perfil de demonstração">
+    <div class="avatar" aria-hidden="true">LA</div>
+    <div><strong>Lucas Araújo · 22 anos · Fortaleza, CE</strong><p>Perfil de demonstração: estudante de Análise e Desenvolvimento de Sistemas, interessado em programação, aplicativos e tecnologia assistiva.</p><span class="demo">DADOS FICTÍCIOS · NÃO SÃO ENVIADOS NEM SALVOS</span></div>
+  </section>
+
+  <section class="searchbox" aria-labelledby="search-title">
+    <h2 id="search-title">Buscar editais em andamento</h2>
+    <div class="filters">
+      <div class="field"><label for="q">Palavra-chave</label><input id="q" type="search" placeholder="Ex.: tecnologia assistiva, saúde digital"></div>
+      <div class="field"><label for="area">Área</label><select id="area"><option value="">Todas as áreas</option><option>Tecnologia Assistiva</option><option>Saúde Digital</option></select></div>
+      <div class="field"><label for="place">Localidade</label><select id="place"><option value="">Todas</option><option value="CE">Ceará</option><option value="BR">Nacional</option></select></div>
+    </div>
+    <div class="checkrow">
+      <label class="check"><input id="matchOnly" type="checkbox"> Mostrar primeiro os compatíveis com o perfil</label>
+      <label class="check"><input id="includeClosed" type="checkbox"> Incluir prazos encerrados</label>
+      <button class="action" id="searchBtn" type="button">Buscar</button>
+    </div>
+  </section>
+
+  <section aria-live="polite">
+    <div class="results-head"><h2>Oportunidades localizadas</h2><div class="count" id="count"></div></div>
+    <div class="cards" id="results"></div>
+  </section>
+
+  <aside class="method">
+    <strong>Como esta busca funciona</strong>
+    <p>Os registros desta demonstração foram conferidos em documentos e páginas oficiais em 13/10/2026. O sistema calcula se o prazo continua aberto e filtra o catálogo; não rastreia toda a internet em tempo real. Cada resultado informa a fonte, o documento e os requisitos usados na análise. O perfil é fictício e não há cadastro, envio de formulário ou armazenamento de dados.</p>
+  </aside>
+</main>
+<footer><div class="wrap">Assistente de Editais · Demonstração com fontes oficiais · <a href="https://igorgomes.eti.br">igorgomes.eti.br</a></div></footer>
+<script>
+const calls = [
+  {
+    id:"ttac-2026",
+    title:"Edital 01/2026 — II Torneio de Tecnologia Assistiva para Cegos",
+    agency:"Governo do Estado do Ceará e instituições parceiras",
+    area:"Tecnologia Assistiva",
+    place:"CE",
+    placeLabel:"Fortaleza, Ceará",
+    kind:"Competição estudantil · premiação",
+    deadline:"2026-10-14T23:59:59-03:00",
+    deadlineLabel:"14 de outubro de 2026",
+    eligibility:"Equipes de 2 a 5 estudantes do ensino técnico ou superior, de instituições públicas ou particulares; integrantes no mesmo nível de ensino.",
+    summary:"Desenvolver tecnologia assistiva autônoma para apoiar a locomoção ou interação de pessoas cegas e com baixa visão, com alertas sonoros ou táteis. O edital prevê premiação para as três equipes mais bem classificadas; não informa valores.",
+    fit:"high",
+    fitLabel:"Alta compatibilidade",
+    fitNote:"O perfil fictício é estudante de ADS no ensino superior e tem interesse em tecnologia assistiva. Para se inscrever, Lucas precisaria formar uma equipe de 2 a 5 estudantes do mesmo nível.",
+    document:"https://feiradoconhecimento.com.br/wp-content/uploads/2026/09/Edital-Torneio-Competicao-para-Cegos-2026.docx-4.pdf",
+    official:"https://www.sct.ce.gov.br/2026/10/08/corrida-pra-cego-ver-desafia-tecnologias-assistivas-na-feira-do-conhecimento-2026/",
+    signup:"https://docs.google.com/forms/d/1-jwpj_lIcW9Uec7w9KtqYcaDoHlpNUZo-qEvHGlujvs/viewform",
+    keywords:"tecnologia assistiva acessibilidade cegueira baixa visão protótipo arduino programação estudante"
+  },
+  {
+    id:"pet-saude-digital-2026",
+    title:"Edital Conjunto SEIDIGI/SGTES-MS nº 1/2026 — PET Saúde Informação e Saúde Digital",
+    agency:"Ministério da Saúde",
+    area:"Saúde Digital",
+    place:"BR",
+    placeLabel:"Nacional",
+    kind:"Chamamento público para projetos institucionais",
+    deadline:"2026-10-13T23:59:59-03:00",
+    deadlineLabel:"13 de outubro de 2026",
+    eligibility:"A proposta deve ser apresentada por Instituto Federal da Rede Federal de Educação Profissional, Científica e Tecnológica, em parceria com secretaria estadual, distrital ou municipal de saúde.",
+    summary:"Seleciona projetos de educação, pesquisa e inovação em informação e saúde digital para o SUS. O cronograma retificado em 7 de outubro fixa o encerramento das inscrições em 13/10/2026.",
+    fit:"low",
+    fitLabel:"Compatibilidade baixa",
+    fitNote:"A área é tecnológica, mas o perfil individual não pode apresentar a proposta. A chamada exige parceria entre Instituto Federal e Secretaria de Saúde.",
+    document:"https://www.gov.br/saude/pt-br/acesso-a-informacao/participacao-social/chamamentos-publicos/2026/chamamento-publico-conjunto-no-1-2026-seidigi-sgtes/edital",
+    official:"https://www.gov.br/saude/pt-br/acesso-a-informacao/participacao-social/chamamentos-publicos/2026/chamamento-publico-conjunto-no-1-2026-seidigi-sgtes",
+    signup:"https://www.gov.br/saude/pt-br/composicao/sgtes/pet-saude/pet-saude-digital",
+    keywords:"saúde digital sus inovação informação dados instituto federal secretaria saúde tecnologia"
+  }
+];
+
+function isOpen(item){
+  return new Date(item.deadline).getTime() >= Date.now();
+}
+function escapeText(value){
+  return String(value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];});
+}
+function renderCard(item){
+  const open=isOpen(item);
+  const badgeClass=open ? (new Date(item.deadline).getTime()-Date.now()<48*60*60*1000 ? "badge soon":"badge") : "badge soon";
+  const status=open ? "Inscrições abertas" : "Prazo encerrado";
+  const fitClass=item.fit==="high" ? "fit" : "fit low";
+  const card=document.createElement("article");
+  card.className="card";
+  card.innerHTML='<div class="cardtop"><div><div class="agency">'+escapeText(item.agency)+'</div><h3>'+escapeText(item.title)+'</h3></div><span class="'+badgeClass+'">'+status+'</span></div>'+
+    '<div class="chips"><span class="chip">'+escapeText(item.area)+'</span><span class="chip">'+escapeText(item.kind)+'</span><span class="chip">'+escapeText(item.placeLabel)+'</span></div>'+
+    '<p>'+escapeText(item.summary)+'</p>'+
+    '<div class="facts"><div class="fact"><small>Prazo final</small><strong>'+escapeText(item.deadlineLabel)+'</strong></div><div class="fact"><small>Quem pode participar</small><strong>'+escapeText(item.eligibility)+'</strong></div></div>'+
+    '<div class="'+fitClass+'"><strong>'+escapeText(item.fitLabel)+'</strong><br>'+escapeText(item.fitNote)+'</div>'+
+    '<div class="links"><a class="linkbtn primary" href="'+escapeText(item.document)+'" target="_blank" rel="noopener noreferrer">Abrir edital original ↗</a><a class="linkbtn" href="'+escapeText(item.official)+'" target="_blank" rel="noopener noreferrer">Ver página oficial ↗</a><a class="linkbtn" href="'+escapeText(item.signup)+'" target="_blank" rel="noopener noreferrer">Inscrição / orientações ↗</a></div>';
+  return card;
+}
+function runSearch(){
+  const query=document.getElementById("q").value.trim().toLocaleLowerCase("pt-BR");
+  const area=document.getElementById("area").value;
+  const place=document.getElementById("place").value;
+  const matchOnly=document.getElementById("matchOnly").checked;
+  const includeClosed=document.getElementById("includeClosed").checked;
+  let filtered=calls.filter(function(item){
+    if(!includeClosed && !isOpen(item)) return false;
+    if(area && item.area!==area) return false;
+    if(place && item.place!==place) return false;
+    if(matchOnly && item.fit!=="high") return false;
+    const searchable=[item.title,item.agency,item.area,item.kind,item.placeLabel,item.eligibility,item.summary,item.keywords].join(" ").toLocaleLowerCase("pt-BR");
+    return !query || searchable.includes(query);
+  });
+  filtered.sort(function(a,b){
+    if(matchOnly && a.fit!==b.fit) return a.fit==="high" ? -1 : 1;
+    return new Date(a.deadline)-new Date(b.deadline);
+  });
+  const results=document.getElementById("results");
+  results.replaceChildren();
+  filtered.forEach(function(item){results.appendChild(renderCard(item));});
+  const active=filtered.filter(isOpen).length;
+  document.getElementById("count").textContent=filtered.length+" resultado(s) · "+active+" com prazo vigente";
+  if(!filtered.length){
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent="Nenhum edital corresponde aos filtros. Confira a palavra-chave ou inclua prazos encerrados.";
+    results.appendChild(empty);
+  }
+}
+["q","area","place","matchOnly","includeClosed"].forEach(function(id){
+  document.getElementById(id).addEventListener(id==="q" ? "input" : "change",runSearch);
+});
+document.getElementById("searchBtn").addEventListener("click",runSearch);
+runSearch();
+</script>
+</body>
+</html>
