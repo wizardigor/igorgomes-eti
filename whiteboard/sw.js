@@ -1,5 +1,5 @@
-const CACHE='igor-whiteboard-20261112-v1';
-const shell=['./','./app.js','./engine.js','./editor.css','./trace-worker.js','./voice-worker.js','./vendor/site.css','./icon-192.png','./icon-512.png','./manifest.webmanifest'];
+const CACHE='igor-whiteboard-hands-v2';
+const shell=['./','./app.js','./engine.js','./hand-sprites.js','./hands/masculina.webp','./hands/feminina.webp','./editor.css','./trace-worker.js','./voice-worker.js','./vendor/site.css','./icon-192.png','./icon-512.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(shell))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igor-whiteboard-')&&k!==CACHE).map(k=>caches.delete(k))))));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!u.pathname.startsWith(new URL('./',self.location).pathname))return;

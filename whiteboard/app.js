@@ -1,3 +1,4 @@
+import {handModel,loadHand,drawWritingHand} from './hand-sprites.js';
 import {clamp,drawStrokes,strokeAt,hand,timeline,contentTime} from './engine.js';
 const $=id=>document.getElementById(id),board=$('board'),ctx=board.getContext('2d');
 const uid=()=>crypto.randomUUID(),say=s=>$('notice').textContent=s;
@@ -5,7 +6,7 @@ const itemBase=(type='text')=>({id:uid(),type,text:'Sua ideia começa aqui.',x:1
 const sceneBase=(name='Nova cena')=>({id:uid(),name,items:[],hold:1,transition:'erase',audio:null,narration:'',voice:'m1',speed:160,pitch:50,gap:0,volume:1,offset:0});
 const first=sceneBase('Uma ideia ganha vida');
 first.items=[{...itemBase(),text:'Uma ideia ganha vida.'},{...itemBase(),text:'Conte a sua história.',x:150,y:245,fontSize:42,color:'#447765',duration:3}];
-let project={version:1,name:'Minha primeira história',aspect:'landscape',background:'#ffffff',skin:'#c98e68',pen:'bic',hand:true,scenes:[first]};
+let project={version:1,name:'Minha primeira história',aspect:'landscape',background:'#ffffff',skin:'#c98e68',pen:'bic',hand:true,handModel:'masculina',scenes:[first]};
 let sceneId=first.id,itemId=first.items[0].id,t=0,edit=true,undo=[],redo=[],run=null,revision=0,writeTimer,drag;
 const scene=()=>project.scenes.find(s=>s.id===sceneId)||project.scenes[0],item=()=>scene().items.find(i=>i.id===itemId);
 const sizes={landscape:[960,540],portrait:[540,960],square:[720,720]},slots=()=>timeline(project.scenes),duration=()=>slots().reduce((n,s)=>n+s.duration,0);
@@ -15,7 +16,7 @@ async function draft(write){const db=await storage();try{return await new Promis
 function schedule(){clearTimeout(writeTimer);writeTimer=setTimeout(()=>draft(true).catch(()=>say('Não foi possível salvar o rascunho. Use Salvar projeto.')),350);}
 function snapshot(){undo.push(structuredClone(project));if(undo.length>20)undo.shift();redo=[];}
 function change(fn){if(run)return;snapshot();fn();t=clamp(t,0,duration());edit=true;schedule();refresh();}
-const projectFields={name:'name',aspect:'aspect','board-color':'background',skin:'skin',pen:'pen'};
+const projectFields={name:'name',aspect:'aspect','board-color':'background',skin:'skin',pen:'pen','hand-model':'handModel'};
 const sceneFields={hold:'hold',transition:'transition',volume:'volume',offset:'offset',narration:'narration',voice:'voice',speed:'speed',pitch:'pitch',gap:'gap'};
 const itemFields={text:'text',effect:'effect',font:'font','font-size':'fontSize',ink:'color',duration:'duration',pause:'pause',x:'x',y:'y',width:'width',rotation:'rotation',detail:'detail'};
 const caches=new WeakMap();let tracer;const waiting=new Map(),audioCache=new Map();
@@ -50,7 +51,7 @@ function drawItem(i,p,withHand){
  else if(i.effect==='fade'||!index&&i.effect!=='slide'){ctx.globalAlpha=p;ctx.drawImage(bmp,0,0);}
  else if(i.effect==='slide'){ctx.translate(-.65*bmp.width*(1-p),0);ctx.drawImage(bmp,0,0);if(withHand)hand(ctx,bmp.width*.7,bmp.height*.32,0,project.skin,'grip',.7/scale);}
  else{const progress=clamp(p/.92,0,1);ctx.strokeStyle=i.color;ctx.lineWidth=i.type==='text'?Math.max(2,i.fontSize/14):2;ctx.lineJoin=ctx.lineCap='round';drawStrokes(ctx,index,progress);
-  if(p>.92){ctx.globalAlpha=(p-.92)/.08;ctx.drawImage(bmp,0,0);ctx.globalAlpha=1;}const tip=strokeAt(index,progress);if(withHand&&tip)hand(ctx,tip.x,tip.y,tip.angle,project.skin,project.pen,.82/scale);
+  if(p>.92){ctx.globalAlpha=(p-.92)/.08;ctx.drawImage(bmp,0,0);ctx.globalAlpha=1;}const tip=strokeAt(index,progress);if(withHand&&tip&&!drawWritingHand(ctx,tip.x,tip.y,tip.angle,project.handModel,scale))hand(ctx,tip.x,tip.y,tip.angle,project.skin,project.pen,.82/scale);
  }
  ctx.restore();
 }
@@ -132,7 +133,7 @@ async function play(exporting=false){
  const length=duration();if(!length||length>600||exporting&&length>180)return say(exporting?'Exporte vídeos de até 3 minutos.':'O projeto precisa ter entre 0 e 10 minutos.');
  const r={exporting,sources:[]};run=r;locked(true);$('listen').pause();say('Preparando desenho e áudio…');
  try{
- const ac=getAudio();await ac.resume();const list=slots();await Promise.all(project.scenes.flatMap(s=>s.items.map(prepare)));const audio=await Promise.all(list.map(({scene:s})=>s.audio?decode(s.audio.src):null));if(run!==r)return;
+ const ac=getAudio();await ac.resume();if(project.hand)await loadHand(project.handModel);const list=slots();await Promise.all(project.scenes.flatMap(s=>s.items.map(prepare)));const audio=await Promise.all(list.map(({scene:s})=>s.audio?decode(s.audio.src):null));if(run!==r)return;
  const offset=exporting||t>=length?0:t;edit=false;t=offset;paint();let dest;
  if(exporting){
   if(!window.MediaRecorder||!board.captureStream)throw Error('Este navegador não exporta vídeo. Salve o projeto e abra no computador.');
@@ -161,7 +162,7 @@ const str=(v,n)=>typeof v==='string'?v.slice(0,n):'';
 const number=(v,min,max,d)=>Number.isFinite(v)?clamp(v,min,max):d;
 function sanitize(p){
  if(p?.version!==1||!Array.isArray(p.scenes)||!p.scenes.length||p.scenes.length>20)throw Error('Selecione um projeto salvo neste editor.');
- return {version:1,name:str(p.name,90)||'Meu projeto',aspect:pick(p.aspect,Object.keys(sizes),'landscape'),background:validColor(p.background,'#ffffff'),skin:validColor(p.skin,'#c98e68'),pen:pick(p.pen,['bic','ball','three','fountain','quill','ink'],'bic'),hand:p.hand!==false,scenes:p.scenes.map(s=>{
+ return {version:1,name:str(p.name,90)||'Meu projeto',aspect:pick(p.aspect,Object.keys(sizes),'landscape'),background:validColor(p.background,'#ffffff'),skin:validColor(p.skin,'#c98e68'),pen:pick(p.pen,['bic','ball','three','fountain','quill','ink'],'bic'),hand:p.hand!==false,handModel:handModel(p.handModel),scenes:p.scenes.map(s=>{
   if(!Array.isArray(s?.items)||s.items.length>30)throw Error('Cena inválida no projeto.');const out=sceneBase(str(s.name,90)||'Cena');
   Object.assign(out,{transition:pick(s.transition,['erase','fade','cut'],'erase'),hold:number(s.hold,0,30,1),volume:number(s.volume,0,1,1),offset:number(s.offset,0,120,0),narration:str(s.narration,3000),voice:pick(s.voice,['m1','m3','f2','f5'],'m1'),speed:number(s.speed,90,300,160),pitch:number(s.pitch,15,85,50),gap:number(s.gap,0,15,0)});
   if(s.audio&&/^data:audio\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/i.test(s.audio.src))out.audio={src:s.audio.src,name:str(s.audio.name,100),duration:number(s.audio.duration,0,600,0)};
@@ -173,5 +174,6 @@ function sanitize(p){
 }
 function replace(p){project=p;sceneId=p.scenes[0].id;itemId=p.scenes[0].items[0]?.id;t=0;}
 $('open').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>40*1024*1024)throw Error('Use um projeto de até 40 MB.');const p=sanitize(JSON.parse(await f.text()));change(()=>replace(p));say('Projeto aberto.');}catch(err){say(err instanceof SyntaxError?'Arquivo de projeto inválido.':err.message);}};
+loadHand('masculina');loadHand('feminina');
 refresh();try{const saved=await draft(false);if(saved&&!undo.length&&!run){replace(sanitize(saved));refresh();say('Rascunho recuperado neste aparelho.');}}catch{}
 if('serviceWorker'in navigator)navigator.serviceWorker.register(new URL('./sw.js',import.meta.url)).catch(()=>{});

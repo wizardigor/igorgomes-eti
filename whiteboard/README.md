@@ -3,7 +3,7 @@ Editor de animações de quadro branco: https://igorgomes.eti.br/whiteboard/
 
 - Crie e reorganize cenas, textos, formas e imagens. Ajuste posição, rotação, tempo, pausas e transição.
 - A ponta da mão segue os traços calculados. Imagens JPG/PNG/WebP passam por detecção Sobel e afinamento Zhang–Suen; a imagem em cores aparece ao final. Funciona melhor com ilustrações limpas e não recupera a ordem original do desenho.
-- Seis instrumentos e seis tons de pele, além de cor livre. Entradas desenhada, colada e suave; transições com apagador, dissolver ou corte.
+- Duas mãos realistas para escrever, ambas com caneta azul e a ponta alinhada ao traço. A mão ilustrada permanece nas transições de colagem e apagador. Entradas desenhada, colada e suave; transições com apagador, dissolver ou corte.
 - Áudio por cena ou narração sintética local em português com variantes de voz, tom, velocidade e pausas como [pausa=0.5]. O áudio entra no vídeo exportado.
 - Projetos JSON com mídias, desfazer/refazer, salvamento de rascunho no navegador, prévia e exportação em WebM/MP4 conforme suporte. Mantenha a aba visível. Limite de 3 minutos por exportação.
 
