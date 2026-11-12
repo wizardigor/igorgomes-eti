@@ -1,0 +1,3 @@
+meSpeak/eSpeak, GNU GPL; Norbert Landsteiner and contributors.
+Upstream: https://github.com/mikolalysenko/mespeak (npm mespeak 2.0.2).
+Corresponding npm source: https://registry.npmjs.org/mespeak/-/mespeak-2.0.2.tgz . Browser bundle built from src/index.js with esbuild --bundle --platform=browser --format=iife --global-name=meSpeak --minify. Config and voice unchanged.

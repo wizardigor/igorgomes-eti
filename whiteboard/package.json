@@ -1,0 +1,1 @@
+{"name":"ig-whiteboard","version":"0.1.0","private":true,"type":"module","scripts":{"preparar":"node preparar-voz.mjs","test":"node test-engine.mjs"},"devDependencies":{"esbuild":"0.25.12","mespeak":"2.0.2"}}

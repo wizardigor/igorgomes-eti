@@ -1,0 +1,3 @@
+# Voz de referência experimental
+Este adaptador não está hospedado no site e não foi validado com pesos XTTS. Para uso privado local, instale as dependências, coqui-tts e PyTorch compatíveis. Instale separadamente um modelo XTTS cuja licença cubra seu uso e configure WHITEBOARD_XTTS_MODEL com a pasta que contém config.json. O código não baixa pesos nem aceita termos por você.
+Sirva a pasta do editor com python -m http.server 8000. Na pasta server, rode uvicorn voice_server:app --host 127.0.0.1 --port 8001. No editor, informe http://localhost:8001, selecione WAV de 6–30 s e confirme a autorização. O servidor usa diretório temporário e o remove ao terminar. Não exponha este exemplo à internet: CORS não substitui autenticação e limites de uso.

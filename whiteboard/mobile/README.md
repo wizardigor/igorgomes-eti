@@ -1,0 +1,2 @@
+# Base para Android e iOS
+O editor web é responsivo e contém manifesto de instalação. Não há APK, IPA ou publicação em lojas. Copie o conteúdo web para mobile/www (sem server, mobile ou tests), instale as dependências e use npx cap add android / npx cap add ios. Android requer SDK/Android Studio; iOS requer macOS/Xcode. Valide exportação, downloads, compartilhamento, áudio e acessibilidade em aparelhos reais antes de assinar e distribuir. https://capacitorjs.com/docs/getting-started/environment-setup
