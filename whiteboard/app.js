@@ -49,9 +49,9 @@ function drawItem(i,p,withHand){
  ctx.save();ctx.translate(i.x+i.width/2,i.y+h/2);ctx.rotate(i.rotation*Math.PI/180);ctx.translate(-i.width/2,-h/2);ctx.scale(scale,scale);
  if(p>=1)ctx.drawImage(bmp,0,0);
  else if(i.effect==='fade'||!index&&i.effect!=='slide'){ctx.globalAlpha=p;ctx.drawImage(bmp,0,0);}
- else if(i.effect==='slide'){ctx.translate(-.65*bmp.width*(1-p),0);ctx.drawImage(bmp,0,0);if(withHand)hand(ctx,bmp.width*.7,bmp.height*.32,0,project.skin,'grip',.7/scale);}
+ else if(i.effect==='slide'){ctx.translate(-.65*bmp.width*(1-p),0);ctx.drawImage(bmp,0,0);if(withHand&&!drawWritingHand(ctx,bmp.width*.7,bmp.height*.32,0,project.handModel,scale,'grip'))hand(ctx,bmp.width*.7,bmp.height*.32,0,project.skin,'grip',.7/scale);}
  else{const progress=clamp(p/.92,0,1);ctx.strokeStyle=i.color;ctx.lineWidth=i.type==='text'?Math.max(2,i.fontSize/14):2;ctx.lineJoin=ctx.lineCap='round';drawStrokes(ctx,index,progress);
-  if(p>.92){ctx.globalAlpha=(p-.92)/.08;ctx.drawImage(bmp,0,0);ctx.globalAlpha=1;}const tip=strokeAt(index,progress);if(withHand&&tip&&!drawWritingHand(ctx,tip.x,tip.y,tip.angle,project.handModel,scale))hand(ctx,tip.x,tip.y,tip.angle,project.skin,project.pen,.82/scale);
+  if(p>.92){ctx.globalAlpha=(p-.92)/.08;ctx.drawImage(bmp,0,0);ctx.globalAlpha=1;}const tip=strokeAt(index,progress);if(withHand&&tip&&!drawWritingHand(ctx,tip.x,tip.y,tip.angle,project.handModel,scale,project.pen))hand(ctx,tip.x,tip.y,tip.angle,project.skin,project.pen,.82/scale);
  }
  ctx.restore();
 }
@@ -60,7 +60,7 @@ function paint(){
  let offset=0;for(const i of s.items){drawItem(i,edit?1:clamp((local-offset)/i.duration,0,1),!edit&&project.hand);offset+=i.duration+i.pause;}
  const tail=local-contentTime(s);
  if(!edit&&tail>0&&s.transition==='fade'){ctx.globalAlpha=clamp(tail/.5,0,1);ctx.fillStyle=project.background;ctx.fillRect(0,0,board.width,board.height);ctx.globalAlpha=1;}
- if(!edit&&tail>0&&s.transition==='erase'){const step=clamp(tail/1.2,0,1)*5,b=board.height/5;ctx.fillStyle=project.background;for(let n=0;n<5;n++){const w=clamp(step-n,0,1)*board.width;ctx.fillRect(n%2?board.width-w:0,n*b,w,b+1);}if(project.hand&&step<5){const n=Math.floor(step),q=step-n;hand(ctx,board.width*(n%2?1-q:q),(n+.5)*b,0,project.skin,'eraser');}}
+ if(!edit&&tail>0&&s.transition==='erase'){const step=clamp(tail/1.2,0,1)*5,b=board.height/5;ctx.fillStyle=project.background;for(let n=0;n<5;n++){const w=clamp(step-n,0,1)*board.width;ctx.fillRect(n%2?board.width-w:0,n*b,w,b+1);}if(project.hand&&step<5){const n=Math.floor(step),q=step-n;const x=board.width*(n%2?1-q:q),y=(n+.5)*b;if(!drawWritingHand(ctx,x,y,0,project.handModel,1,'eraser'))hand(ctx,x,y,0,project.skin,'eraser');}}
  const i=item(),bmp=i&&caches.get(i)?.result?.bmp;if(edit&&bmp){const h=i.width*bmp.height/bmp.width;ctx.save();ctx.translate(i.x+i.width/2,i.y+h/2);ctx.rotate(i.rotation*Math.PI/180);ctx.setLineDash([6,4]);ctx.strokeStyle='#659a85';ctx.strokeRect(-i.width/2,-h/2,i.width,h);ctx.restore();}
  $('seek').value=t;$('clock').textContent=stamp(t)+' / '+stamp(duration());
 }
