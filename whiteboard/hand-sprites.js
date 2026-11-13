@@ -21,7 +21,7 @@ export function loadHand(value){
  const model=handModel(value);
  return Promise.all([load(model),load(model+'-ferramentas'),load('nanquim')]);
 }
-export function drawWritingHand(ctx,x,y,angle,value,scale,tool='ball'){
+export function drawWritingHand(ctx,x,y,angle,value,scale,tool='ball',side=1){
  const model=handModel(value);
  if(!Object.hasOwn(models[model],tool))tool='ball';
  const image=images.get(tool==='ball'?model:tool==='ink'?'nanquim':model+'-ferramentas');
@@ -37,7 +37,17 @@ export function drawWritingHand(ctx,x,y,angle,value,scale,tool='ball'){
  const rx=image.naturalWidth/originalWidth,ry=image.naturalHeight/originalHeight;
  ctx.save();
  ctx.translate(x,y);
+ ctx.scale(side,1);
  ctx.rotate(Math.sin(angle)*.12);
+ // Continue the wrist along its direction so its cut edge stays beyond the board.
+ const wrist=tool==='ball'?(model==='masculina'?1164:1159):tool==='ink'?720:(sy?991:475)-sy;
+ const left=-(tipX-sx)*w/sw,top=-(tipY-sy)*h/sh,edge=top+wrist*h/sh;
+ if(typeof ctx.transform==='function'){
+  ctx.save();
+  ctx.transform(1,0,.55,1,left,edge);
+  ctx.drawImage(image,sx*rx,(sy+wrist-5)*ry,sw*rx,5*ry,0,-1,w,1100/scale);
+  ctx.restore();
+ }
  ctx.drawImage(image,sx*rx,sy*ry,sw*rx,sh*ry,-(tipX-sx)*w/sw,-(tipY-sy)*h/sh,w,h);
  ctx.restore();
  return true;
