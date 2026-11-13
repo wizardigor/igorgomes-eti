@@ -1,7 +1,7 @@
 export const fonts={
  hand:'"Comic Sans MS","Segoe Print",cursive',sans:'Arial,sans-serif',serif:'Georgia,serif',
  rounded:'"Trebuchet MS",Verdana,sans-serif',humanist:'Verdana,Geneva,sans-serif',
- classic:'"Times New Roman",serif',mono:'"Courier New",monospace',display:'Impact,"Arial Black",sans-serif'
+ classic:'"Times New Roman",serif',mono:'"Courier New",monospace',display:'Impact,"Arial Black",sans-serif',gothic:'WB Gothic',trash:'WB Trash',terror:'WB Terror'
 };
 export const shapes={
  bulb:'M126 209 Q125 183 96 155 C57 112 82 49 131 33 C192 11 245 60 236 112 Q233 138 209 160 Q189 182 191 209 Z M134 230 H183 M141 252 H177 M158 208 V124 M139 116 L158 132 L178 116 M58 57 L38 37 M260 57 L280 37 M158 13 V4 M53 117 H29 M265 117 H289',
