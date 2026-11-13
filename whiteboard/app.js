@@ -1,6 +1,7 @@
+import {loadSpecialFont} from './special-fonts.js';
 import {voiceStyles,voiceChain} from './voice-effects.js';
 import {fonts,shapes,effects,cropRect,entrance} from './editor-options.js';
-import {handModel,loadHand,drawWritingHand} from './hand-sprites.js';
+import {handModel,loadHand,drawWritingHand} from './hand-sprites.js?v=6';
 import {clamp,drawStrokes,strokeAt,hand,timeline,contentTime} from './engine.js';
 const $=id=>document.getElementById(id),board=$('board'),ctx=board.getContext('2d');
 const uid=()=>crypto.randomUUID(),say=s=>$('notice').textContent=s;
@@ -23,7 +24,7 @@ const sceneFields={hold:'hold',transition:'transition',volume:'volume',offset:'o
 const itemFields={text:'text',effect:'effect','shape-kind':'shape',font:'font','font-size':'fontSize',ink:'color',duration:'duration',pause:'pause',x:'x',y:'y',width:'width',rotation:'rotation',detail:'detail'};
 const caches=new WeakMap();let tracer;const waiting=new Map(),audioCache=new Map();
 const key=i=>[i.type,i.text,i.font,i.fontSize,i.color,i.detail,i.effect,i.shape,...i.crop,i.src].join('|');
-function raster(i){
+function raster(i,loadedFont){
  const c=document.createElement('canvas'),g=c.getContext('2d');
  if(i.type==='image')return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const [x,y,w,h]=i.crop,[iw,ih]=[img.naturalWidth,img.naturalHeight],q=Math.min(1,520/Math.max(iw*w,ih*h));c.width=Math.max(1,Math.round(iw*w*q));c.height=Math.max(1,Math.round(ih*h*q));g.drawImage(img,x*iw,y*ih,w*iw,h*ih,0,0,c.width,c.height);res(c);};img.onerror=()=>rej(Error('Imagem inválida.'));img.src=i.src;});
  if(i.type==='shape'){
@@ -31,10 +32,17 @@ function raster(i){
   const p=new Path2D(shapes[i.shape]||shapes.bulb);
   g.stroke(p);return c;
  }
- const font=i.fontSize+'px '+fonts[i.font],lineHeight=Math.ceil(i.fontSize*1.35),lines=[];
+ const font=i.fontSize+'px '+(loadedFont||fonts[i.font]),lineHeight=Math.ceil(i.fontSize*1.35),lines=[];
  g.font=font;
  for(const para of i.text.split('\n')){let line='';for(const word of para.split(/\s+/)){const next=line?line+' '+word:word;if(line&&g.measureText(next).width>612){lines.push(line);line=word;}else line=next;}lines.push(line);}
- c.width=640;c.height=Math.max(38,Math.min(1350,lines.length*lineHeight+16));g.font=font;g.textBaseline='top';g.fillStyle=i.color;lines.forEach((line,n)=>g.fillText(line,10,8+n*lineHeight,620));return c;
+ if(!loadedFont){c.width=640;c.height=Math.max(38,Math.min(1350,lines.length*lineHeight+16));g.font=font;g.textBaseline='top';g.fillStyle=i.color;lines.forEach((line,n)=>g.fillText(line,10,8+n*lineHeight,620));return c;}
+ g.textBaseline='alphabetic';
+ const metrics=lines.map(line=>g.measureText(line));
+ const ascent=Math.max(i.fontSize,...metrics.map(m=>m.actualBoundingBoxAscent||0));
+ const descent=Math.max(i.fontSize*.24,...metrics.map(m=>m.actualBoundingBoxDescent||0));
+ const spacing=Math.max(lineHeight,Math.ceil(ascent+descent+4)),baseline=8+ascent;
+ c.width=640;c.height=Math.max(38,Math.ceil(baseline+descent+(lines.length-1)*spacing+8));
+ g.font=font;g.textBaseline='alphabetic';g.fillStyle=i.color;lines.forEach((line,n)=>g.fillText(line,10,baseline+n*spacing,620));return c;
 }
 async function trace(canvas,i){
  if(!tracer){tracer=new Worker(new URL('./trace-worker.js',import.meta.url),{type:'module'});tracer.onmessage=({data})=>{const cb=waiting.get(data.id);if(cb)cb(data);};tracer.onerror=()=>{for(const cb of waiting.values())cb({error:'Não foi possível calcular os traços.'});tracer.terminate();tracer=null;};}
@@ -43,7 +51,7 @@ async function trace(canvas,i){
 }
 async function prepare(i){
  const k=key(i),old=caches.get(i);if(old?.key===k)return old.promise;
- const entry={key:k,promise:null,result:null};entry.promise=(async()=>{if(i.type==='text'&&['gothic','trash','terror'].includes(i.font))await document.fonts.load(i.fontSize+'px "'+fonts[i.font]+'"');const bmp=await raster(i),index=i.effect==='draw'?await trace(bmp,i):null;return entry.result={bmp,index};})().catch(e=>{if(caches.get(i)===entry)caches.delete(i);throw e;});caches.set(i,entry);return entry.promise;
+ const entry={key:k,promise:null,result:null};entry.promise=(async()=>{let loadedFont=null;if(i.type==='text'){try{loadedFont=await loadSpecialFont(i.font);}catch{throw Error('Não foi possível carregar a fonte escolhida. Recarregue a página ou escolha outra fonte.');}}const bmp=await raster(i,loadedFont),index=i.effect==='draw'?await trace(bmp,i):null;return entry.result={bmp,index};})().catch(e=>{if(caches.get(i)===entry)caches.delete(i);throw e;});caches.set(i,entry);return entry.promise;
 }
 function drawItem(i,p,withHand,side=1){
  const cache=caches.get(i)?.result;if(!cache||p<=0)return;
@@ -95,6 +103,8 @@ function refresh(){
  $('elements').replaceChildren(...s.items.map((el,n)=>new Option((n+1)+'. '+(el.type==='text'?el.text.slice(0,30):el.type==='image'?'Imagem':'Forma'),el.id)));
  $('elements').value=itemId||'';$('item-fields').hidden=!i;$('text-label').hidden=i?.type!=='text';$('shape-label').hidden=i?.type!=='shape';$('crop-actions').hidden=i?.type!=='image';$('font-label').hidden=i?.type!=='text';$('detail-label').hidden=i?.type!=='image';$('font-size').disabled=i?.type!=='text';
  for(const [obj,map] of [[project,projectFields],[s,sceneFields],[i,itemFields]])if(obj)for(const [id,k] of Object.entries(map))$(id).value=obj[k];
+ $('font-samples').hidden=i?.type!=='text';
+ for(const btn of $('font-samples').querySelectorAll('button'))btn.setAttribute('aria-pressed',String(i?.font===btn.dataset.font));
  $('flip-x').checked=!!i?.flipX;$('flip-y').checked=!!i?.flipY;
  $('item-timing').textContent=i?'Começa em '+s.items.slice(0,s.items.indexOf(i)).reduce((n,a)=>n+a.duration+a.pause,0).toLocaleString('pt-BR',{maximumFractionDigits:2})+' s nesta cena.':'';
  $('show-hand').checked=project.hand;$('listen').hidden=!s.audio;
@@ -107,6 +117,10 @@ function refresh(){
 function control(id){const el=$(id);if(el.type!=='number'&&el.type!=='range')return el.value;return clamp(Number(el.value)||0,Number(el.min),Number(el.max));}
 for(const [get,map] of [[()=>project,projectFields],[scene,sceneFields],[item,itemFields]])for(const [id,k] of Object.entries(map))$(id).onchange=()=>change(()=>{const obj=get();if(!obj)return;const v=control(id);if(id==='aspect'){const [ow,oh]=sizes[project.aspect],[w,h]=sizes[v];for(const s of project.scenes)for(const i of s.items){i.x=Math.round(i.x*w/ow);i.y=Math.round(i.y*h/oh);i.width=Math.round(clamp(i.width*w/ow,40,960));}}obj[k]=v;});
 $('elements').onchange=()=>{itemId=$('elements').value;edit=true;refresh();};$('show-hand').onchange=()=>change(()=>project.hand=$('show-hand').checked);
+for(const btn of $('font-samples').querySelectorAll('button')){
+ loadSpecialFont(btn.dataset.font).then(family=>{btn.querySelector('span').style.fontFamily=family;}).catch(()=>{});
+ btn.onclick=()=>{if(item()?.type==='text')change(()=>item().font=btn.dataset.font);};
+}
 for(const [id,prop] of [['flip-x','flipX'],['flip-y','flipY']])$(id).onchange=()=>{if(item())change(()=>item()[prop]=$(id).checked);};
 for(const skin of ['#f4d9c6','#e4b590','#c98e68','#a96d48','#7d4931','#4d2d20']){const b=button('',()=>change(()=>project.skin=skin));b.style.backgroundColor=skin;b.setAttribute('aria-label','Tom de pele '+skin);$('swatches').append(b);}
 function addItem(i,s=scene()){if(s.items.length>=30){say('Limite de 30 elementos por cena.');return;}change(()=>{s.items.push(i);if(scene()===s)itemId=i.id;});}
